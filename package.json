@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start:dev": "nodemon server/index.js --ignore dist/ --ignore src/ & npm run build:dev",
-    "build:dev": "npm run build -- --watch --mode=development"
+    "build:dev": "npm run build -- --watch --mode=development",
+    "start": "node server"
   },
   "dependencies": {
     "@material-ui/core": "^4.12.3",
