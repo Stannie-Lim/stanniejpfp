@@ -17,7 +17,7 @@ const students = (state = [], action) => {
     case GET_STUDENTS:
       return action.students;
     case CREATE_STUDENT:
-      return [...state, action.student];
+      return [action.student, ...state];
     case EDIT_STUDENT:
       return state.map(student => student.id === +action.student.id ? action.student : student);
     case DELETE_STUDENT:
@@ -32,7 +32,7 @@ const campuses = (state = [], action) => {
     case GET_CAMPUSES:
       return action.campuses;
     case CREATE_CAMPUS:
-      return [...state, action.campus];
+      return [action.campus, ...state];
     case EDIT_CAMPUS:
       return state.map(campus => campus.id === +action.campus.id ? action.campus : campus);
     case DELETE_CAMPUS:

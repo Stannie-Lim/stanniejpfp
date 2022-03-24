@@ -23,12 +23,12 @@ export const Campuses = () => {
     <ul>
       <CampusForm submitForm={submitForm} />
       {campuses.map(({ id, name }) => (
-        <>
-          <Link key={id} to={`/campuses/${id}`}>
+        <div key={id}>
+          <Link to={`/campuses/${id}`}>
             <h1>{name}({students.filter(({ campusId }) => campusId === id).length})</h1>
           </Link>
           <Button variant="outlined" onClick={() => destroyCampus(id)}>Annihilate Campus</Button>
-        </>
+        </div>
       ))}
     </ul>
   );

@@ -1,6 +1,8 @@
 const express = require('express')
 const path = require('path')
 const Sequelize = require('sequelize');
+const { faker } = require('@faker-js/faker');
+
 const { STRING, DECIMAL, TEXT, VIRTUAL } = Sequelize.DataTypes;
 
 const db = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/jpfp');
@@ -84,12 +86,31 @@ const syncAndSeed = async () => {
   try {
     await db.sync({ force: true });
 
-    const campuses = ['nyu', 'fullstack', 'halfstack', 'some campus'];
+    const createdCampuses = await Promise.all(
+      Array(10).fill().map(() => {
+        return Campus.create({
+          name: faker.company.companyName(),
+          address: faker.address.streetAddress(),
+          description: faker.lorem.paragraph(),
+          imageUrl: faker.image.avatar(),
+        });
+      }),
+    );
 
-    const createdCampuses = await Promise.all(campuses.map(name => Campus.create({ name, address: 'some address', description: 'some description' })));
-
-    const students = ['stanley', 'jonathan', 'shaun'];
-    await Promise.all(students.map(name => Student.create({ firstName: name, lastName: 'this is a last name', campusId: createdCampuses[Math.floor(Math.random() * createdCampuses.length)].id, gpa: Math.floor(Math.random() * 4), email: `${name}@gmail.com` })));
+    await Promise.all(
+      Array(50).fill().map(() => {
+        const firstName = faker.name.firstName();
+        const lastName = faker.name.lastName();
+        return Student.create({
+          firstName,
+          lastName,
+          campusId: createdCampuses[Math.floor(Math.random() * createdCampuses.length)].id,
+          gpa: Math.floor(Math.random() * 4),
+          email: `${firstName}.${lastName}@fb.com`,
+          imageUrl: faker.image.avatar(),
+        });
+      })
+    );
 
   } catch (error) {
     console.log(error);
@@ -109,7 +130,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/campuses', async (req, res, next) => {
   try {
-    res.send(await Campus.findAll());
+    res.send(await Campus.findAll({ orderBy: [['createdAt', 'DESC']] }));
   } catch (error) {
     next(error);
   }
@@ -154,7 +175,7 @@ app.delete('/api/campus/:id', async (req, res, next) => {
 
 app.get('/api/students', async (req, res, next) => {
   try {
-    res.send(await Student.findAll());
+    res.send(await Student.findAll({ order: [['createdAt', 'DESC']] }));
   } catch (error) {
     next(error);
   }
