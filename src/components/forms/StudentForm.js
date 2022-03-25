@@ -46,7 +46,7 @@ export const StudentForm = ({ student, submitForm, isEdit, setModalOpen }) => {
           <TextField name="imageUrl" value={inputs.imageUrl} onChange={onChange} fullWidth label="Image URL" variant="outlined" />
         </Grid>
         <Grid item xs={6}>
-          <TextField required name="gpa" value={inputs.gpa} onChange={onChange} fullWidth label="GPA" variant="outlined" type="number" InputProps={{ inputProps: { min: 0, max: 4, step: 0.1, } }} />
+          <TextField required name="gpa" value={inputs.gpa} onChange={onChange} fullWidth label="GPA" variant="outlined" type="number" InputProps={{ inputProps: { min: 0, max: 4, step: 0.01, } }} />
         </Grid>
         <Grid item xs={6}>
           <Autocomplete
@@ -60,7 +60,7 @@ export const StudentForm = ({ student, submitForm, isEdit, setModalOpen }) => {
           />
         </Grid>
         <Grid item xs={12}>
-          {inputs.imageUrl && <Avatar src={inputs.imageUrl} />}
+          {inputs.imageUrl && !isEdit && <Avatar src={inputs.imageUrl} />}
         </Grid>
         <Grid container item xs={12} justifyContent="flex-end">
           <Grid item>

@@ -105,7 +105,7 @@ const syncAndSeed = async () => {
           firstName,
           lastName,
           campusId: createdCampuses[Math.floor(Math.random() * createdCampuses.length)].id,
-          gpa: Math.floor(Math.random() * 4),
+          gpa: Number((Math.random() * 4).toFixed(2)),
           email: `${firstName}.${lastName}@fb.com`,
           imageUrl: faker.image.avatar(),
         });

@@ -7,7 +7,6 @@ import { AppBar, Toolbar, Typography, Badge, IconButton } from '@material-ui/cor
 
 import PersonIcon from '@material-ui/icons/Person';
 import SchoolIcon from '@material-ui/icons/School';
-import MapIcon from '@material-ui/icons/Map';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -49,13 +48,6 @@ export const Nav = () => {
             <Link className={classes.link} to='/campuses'>
               <Badge badgeContent={numCampuses} color="secondary">
                 <SchoolIcon />
-              </Badge>
-            </Link>
-          </IconButton>
-          <IconButton color="inherit">
-            <Link className={classes.link} to='/map'>
-              <Badge color="secondary">
-                <MapIcon />
               </Badge>
             </Link>
           </IconButton>

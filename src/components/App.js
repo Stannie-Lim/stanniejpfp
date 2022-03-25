@@ -25,7 +25,6 @@ export const App = () => {
       <Route exact path='/campuses' component={Campuses} />
       <Route exact path='/students/:id' component={SingleStudent} />
       <Route exact path='/campuses/:id' component={SingleCampus} />
-      <Route exact path='/map' component={() => <h1>TODO</h1>} />
     </HashRouter>
   );
 };
