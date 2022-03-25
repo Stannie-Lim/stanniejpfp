@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { HashRouter, Route } from 'react-router-dom';
+import { HashRouter, Redirect, Route } from 'react-router-dom';
 
 import { Nav } from './Nav';
 import { Students } from './Students';
@@ -21,6 +21,9 @@ export const App = () => {
   return (
     <HashRouter>
       <Route path='/' component={Nav} />
+      <Route exact path='/'>
+        <Redirect to='/students' />
+      </Route>
       <Route exact path='/students' component={Students} />
       <Route exact path='/campuses' component={Campuses} />
       <Route exact path='/students/:id' component={SingleStudent} />
