@@ -8,17 +8,19 @@ import { Avatar, DialogActions, DialogContentText, DialogContent, ListItem, List
 
 import AddIcon from '@material-ui/icons/Add';
 
-import { createStudent, deleteStudent } from '../store';
+import { createStudent, deleteStudent, editStudent } from '../store';
 
 import { StudentForm } from './forms/StudentForm';
+import { findStudentCampus } from '../helpers';
 
 const useStyles = makeStyles({
-  avatar: {
-    
-  },
   link: {
     textDecoration: 'none',
     color: '#4a4a4a',
+  },
+  blueLink: {
+    textDecoration: 'none',
+    color: 'dodgerBlue',
   },
 });
 
@@ -26,9 +28,12 @@ export const Students = () => {
   const classes = useStyles();
   const [createModalOpen, setCreateModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(null);
+  const [unregisterModalOpen, setUnregisterModalOpen] = useState(null);
+  const [studentCampus, setStudentCampus] = useState(null);
+
   const [page, setPage] = useState(1);
 
-  const students = useSelector(({ students }) => students);
+  const { students, campuses } = useSelector(({ students, campuses }) => ({ campuses, students }));
   const [paginatedStudents, setPaginatedStudents] = useState(students);
 
   useEffect(() => {
@@ -36,11 +41,23 @@ export const Students = () => {
     setPaginatedStudents(paginated);
   }, [page, students]);
 
+  useEffect(() => {
+    if (!unregisterModalOpen) return;
+
+    setStudentCampus(findStudentCampus(unregisterModalOpen, campuses));
+  }, [unregisterModalOpen]);
+
   const dispatch = useDispatch();
   const submitForm = (inputs) => {
     setCreateModalOpen(false);
     dispatch(createStudent(inputs));
     setPage(1);
+  };
+
+  const unregisterStudent = () => {
+    if (!unregisterModalOpen) return;
+    dispatch(editStudent({ ...unregisterModalOpen, campusId: null }, unregisterModalOpen.id));
+    setUnregisterModalOpen(null);
   };
 
   const destroyStudent = () => {
@@ -59,7 +76,7 @@ export const Students = () => {
           <Grid item xs={12}>
             <ListItem button onClick={() => setCreateModalOpen(true)}>
               <ListItemAvatar>
-                <Avatar className={classes.avatar}>
+                <Avatar>
                   <AddIcon />
                 </Avatar>
               </ListItemAvatar>
@@ -67,23 +84,33 @@ export const Students = () => {
             </ListItem>
           </Grid>
         </Grid>
-        {paginatedStudents.map((student) => (
-          <Grid item container key={student.id} alignItems="center" justifyContent="space-between">
-            <Grid item xs={8}>
-              <Link to={`/students/${student.id}`} className={classes.link}>
-                <ListItem button>
-                  <ListItemAvatar>
-                    <Avatar className={classes.avatar} src={student.imageUrl} />
-                  </ListItemAvatar>
-                  <ListItemText primary={student.fullName} />
-                </ListItem>
-              </Link>
+        {paginatedStudents.map((student) => {
+          const campus = findStudentCampus(student, campuses);
+          return (
+            <Grid item container key={student.id} alignItems="center" justifyContent="space-between">
+              <Grid item xs>
+                <Link to={`/students/${student.id}`} className={classes.link}>
+                  <ListItem button>
+                    <ListItemAvatar>
+                      <Avatar src={student.imageUrl} />
+                    </ListItemAvatar>
+                    <ListItemText primary={campus ? `${student.fullName} attends ${campus.name}` : `${student.fullName} - unregistered`} />
+                  </ListItem>
+                </Link>
+              </Grid>
+              <Grid item container spacing={2} xs>
+                <Grid item>
+                  <Button fullWidth color="secondary" variant="outlined" onClick={() => setDeleteModalOpen(student)}>Utterly destroy student</Button>
+                </Grid>
+                {student.campusId !== null && (
+                  <Grid item>
+                    <Button fullWidth color="primary" variant="outlined" onClick={() => setUnregisterModalOpen(student)}>Unregister student</Button>
+                  </Grid>
+                )}
+              </Grid>
             </Grid>
-            <Grid item xs={3}>
-              <Button fullWidth color="secondary" variant="outlined" onClick={() => setDeleteModalOpen(student)}>Utterly destroy student</Button>
-            </Grid>
-          </Grid>
-        ))}
+          );
+        })}
         <Grid container item justifyContent="center">
           <Grid item>
             <Pagination count={Math.floor(students.length / 10)} page={page} onChange={changePage} />
@@ -113,6 +140,29 @@ export const Students = () => {
             </Button>
           </DialogActions>
        </Dialog> 
+      )}
+      {!!unregisterModalOpen && !!studentCampus && (
+        <Dialog onClose={() => setUnregisterModalOpen(null)} open={!!unregisterModalOpen}>
+          <DialogTitle>
+            Are you sure you want to unregister {' '}
+            <Link className={classes.blueLink} to={`/students/${unregisterModalOpen.id}`}>
+              {unregisterModalOpen?.fullName}
+            </Link>
+            {' '} from {' '}
+            <Link className={classes.blueLink} to={`/campuses/${studentCampus.id}`}>
+              {studentCampus?.name}
+            </Link>
+            ?
+          </DialogTitle>
+          <DialogActions>
+            <Button variant="outlined" onClick={() => setUnregisterModalOpen(null)} color="primary">
+              Cancel
+            </Button>
+            <Button variant="outlined" color="primary" onClick={unregisterStudent}>
+              Unregister
+            </Button>
+          </DialogActions>
+        </Dialog> 
       )}
     </>
   );

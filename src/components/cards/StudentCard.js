@@ -36,13 +36,17 @@ export const StudentCard = ({ student, campus, setEditModalOpen }) => {
                 {student.gpa} GPA
               </Typography>
             </Grid>
-            {campus && (
+            {campus ? (
               <Grid item>
                 <Typography variant="body2">Attends{' '}
                   <Link to={`/campuses/${campus.id}`} style={{ textDecoration: 'none', color: 'dodgerBlue' }}>
                     {campus.name}
                   </Link>
                 </Typography>
+              </Grid>
+            ) : (
+              <Grid item>
+                <Typography variant="body2">{student.fullName} is not assigned to a campus.</Typography>
               </Grid>
             )}
           </Grid>

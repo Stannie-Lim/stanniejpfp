@@ -9,11 +9,12 @@ import { StudentCard } from './cards/StudentCard';
 import { StudentForm } from './forms/StudentForm';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import { findStudentCampus } from '../helpers';
 
 export const SingleStudent = ({ match }) => {
   const { id } = match.params;
-  const student = useSelector(({ students }) => students.find(student => student.id === +id));
-  const campus = useSelector(({ campuses }) => campuses.find(({ id }) => id === student?.campusId));
+  const { student, campuses } = useSelector(({ students, campuses }) => ({ student: students.find(student => student.id === +id), campuses }));
+  const campus = findStudentCampus(student, campuses);
 
   const [editModalOpen, setEditModalOpen] = useState(false);
 
